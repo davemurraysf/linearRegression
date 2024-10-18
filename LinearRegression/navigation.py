@@ -44,8 +44,9 @@ def navigation():
                 current_path = full_path
             else:
                 if is_csv_file(selection):
+                    full_path = os.path.join(current_path, selection)
                     #print(f'CSV file selected: {selection}')
-                    return selection
+                    return full_path
                 else:
                     print("Error: Please select a CSV file.")
 
