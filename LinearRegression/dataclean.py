@@ -11,17 +11,16 @@ Reveiw data base fields and repeat
 import pandas as pd
 import sqlite3
 from navigation import navigation
-import scipy.stats
 
 '''
 ----------------------------------------------------------------------------------------------
 #get file path
 ----------------------------------------------------------------------------------------------
 '''
-
-option_selected = navigation()
-#print(option)
-
+def get_csv():
+    option_selected = navigation()
+    #print(option)
+    return option_selected 
 
 '''
 ----------------------------------------------------------------------------------------------
@@ -35,13 +34,29 @@ def database(option):
     pandasdf.to_sql('insurance_data', conn, if_exists='replace', index=False)
     return conn
 
+'''
+----------------------------------------------------------------------------------------------
+#reconnects to database when connection is closed
+----------------------------------------------------------------------------------------------
+'''
+def connect():
+    conn = sqlite3.connect('insurance_data.db')
+    return conn
+
+'''
+----------------------------------------------------------------------------------------------
+#reconnects to database when connection is closed
+----------------------------------------------------------------------------------------------
+'''
+def close(conn):
+    conn.close()
 
 '''
 ----------------------------------------------------------------------------------------------
 #extract table info cursor
 ----------------------------------------------------------------------------------------------
 '''
-def extract_table_info(connection):
+def extract_table_info(conn):
     cursor = conn.cursor()
     cursor.execute("PRAGMA table_info(insurance_data)")
     headers_info = cursor.fetchall()
@@ -50,7 +65,7 @@ def extract_table_info(connection):
     quant = []
     qual = []
     for header in headers_info:
-        #print(f"Header Name: {header[1]}, Data Type: {header[2]}")
+        print(f"Header Name: {header[1]}, Data Type: {header[2]}")
         fields.append(header[1])
         dataType = header[2]
         match dataType:
@@ -73,7 +88,7 @@ def extract_table_info(connection):
 def find_missing_data(conn, fields, missing_param):
     missing_data= []
     for field in fields:
-        search_string = "SELECT * FROM insurance_data WHERE {f} = {m}".format(f = field, m = missing_param)
+        search_string = "SELECT * FROM insurance_data WHERE {f} = '{m}'".format(f = field, m = missing_param)
         #print(search_string)
         query = pd.read_sql_query(search_string, conn)
         #print(query)
@@ -90,17 +105,17 @@ def find_missing_data(conn, fields, missing_param):
 #unique qualitative
 ----------------------------------------------------------------------------------------------
 '''
-def 
-dynamic_dict_qual = {}
-for field in qual:
-    #field_name = field
-    search_string = "SELECT DISTINCT {f} FROM insurance_data".format(f = field)
-    dict_name = "{f}_dict".format(f=field)
-    query = pd.read_sql_query(search_string, conn)
-    print(query[field])
-    dynamic_dict_qual[dict_name] = {i: value for i, value in enumerate(query[field])}
-for name, content in dynamic_dict_qual.items():
-    print(f"{name}: {content}")
+def unique_qualitative_values(conn, qual):
+    dynamic_dict_qual = {}
+    for field in qual:
+        #field_name = field
+        search_string = "SELECT DISTINCT {f} FROM insurance_data".format(f = field)
+        dict_name = "{f}_dict".format(f=field)
+        query = pd.read_sql_query(search_string, conn)
+        print(query[field])
+        dynamic_dict_qual[dict_name] = {i: value for i, value in enumerate(query[field])}
+    for name, content in dynamic_dict_qual.items():
+        print(f"{name}: {content}")
 
 
 '''
@@ -113,9 +128,35 @@ query = pd.read_sql_query("SELECT * FROM insurance_data WHERE total_claim_amount
 #print(query)
 '''
 
+
+
+'''
+----------------------------------------------------------------------------------------------
+# Test of functions in code
+----------------------------------------------------------------------------------------------
+'''
+
+'''
+csv_path = get_csv()
+connection = database(csv_path)
+connection = connect()
+qualitative, quantitative, headers = extract_table_info(connection)
+print(qualitative)
+print(quantitative)
+print(headers)
+missing_data_paramater = "?"
+missing_data = find_missing_data(connection, headers, missing_data_paramater)
+print(missing_data)
+unique_values = unique_qualitative_values(connection, qualitative)
+close(connection)
+'''
+
 '''
 ----------------------------------------------------------------------------------------------
 #close
 ----------------------------------------------------------------------------------------------
 '''
-conn.close()
+
+'''
+connection.close()
+'''
