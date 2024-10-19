@@ -24,15 +24,32 @@ def get_csv():
 
 '''
 ----------------------------------------------------------------------------------------------
+#checks if there are any empty colomns
+----------------------------------------------------------------------------------------------
+'''
+def empty_column_check(dataframe: pd.DataFrame): 
+    df_cleaned = dataframe.dropna(axis=1, how='all')
+    removed_columns = dataframe.columns[dataframe.isna().all()].tolist()
+    if removed_columns:
+        print(f"Removed columns with only empty data: {removed_columns}")
+    else:
+        print("No columns with only empty data were found.")
+    return df_cleaned
+    #return df_cleaned, removed_columns
+
+'''
+----------------------------------------------------------------------------------------------
 #convert to database function
 ----------------------------------------------------------------------------------------------
 '''
 def database(option): 
     pandasdf = pd.read_csv(option)
+    pandasdf = empty_column_check(pandasdf)
     #print(pandasdf)
     conn = sqlite3.connect('insurance_data.db')
     pandasdf.to_sql('insurance_data', conn, if_exists='replace', index=False)
     return conn
+
 
 '''
 ----------------------------------------------------------------------------------------------
@@ -98,6 +115,7 @@ def find_missing_data(conn, fields, missing_param):
         else:
             #print(f"Missin Data found for field: {field}")
             missing_data.append(field)
+    return missing_data
     #print(missing_data)
 
 '''

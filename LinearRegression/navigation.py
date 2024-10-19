@@ -100,7 +100,16 @@ def menu(options):
         selection = menu_selection(options)
         return selection
 
-
+def get_input_int(text):
+    
+    while True:
+        number_str = input(text)
+        try:
+            number = float(number_str)
+            #print("You entered:", number)
+            return number
+        except ValueError:
+            print("Invalid input. Please enter an float.")
 
 
 #options_list = [1,2,3,4,5]
@@ -109,3 +118,6 @@ def menu(options):
 
 #option = navigation()
 #print(option)
+#number = get_input_int("Please enter threshold value: ",)
+#print(number)
+
