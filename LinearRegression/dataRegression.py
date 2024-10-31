@@ -15,12 +15,24 @@ import numpy as np
 import pandas as pd
 import sqlite3
 
+'''
+----------------------------------------------------------------------------------------------
+#Identifies Unique Values from field in db
+----------------------------------------------------------------------------------------------
+'''
+
 
 def unique_values(dataframe: pd.DataFrame ,field):
     unique_values = dataframe[field].nunique()
     total_records = len(dataframe)
     unique_percentage = unique_values/total_records
     return unique_percentage
+
+'''
+----------------------------------------------------------------------------------------------
+#checks quality of qualitative data in db against regression target to exclude variables not relevant
+----------------------------------------------------------------------------------------------
+'''
 
 def check_qualitative(conn, target, qualitative, threshold):
     search_string = "SELECT * FROM insurance_data"
@@ -41,6 +53,12 @@ def check_qualitative(conn, target, qualitative, threshold):
             qualitative_check[quals] = "Keep: Column is relevant"
     return qualitative_check, exclusion_list
 
+'''
+----------------------------------------------------------------------------------------------
+#checks quality of quantitative data in db against regression target to exclude variables not relevant
+----------------------------------------------------------------------------------------------
+'''
+
 def check_quantitative(conn, target, quantitative, threshold):
     search_string = "SELECT * FROM insurance_data"
     df = pd.read_sql_query(search_string, conn)
@@ -57,14 +75,30 @@ def check_quantitative(conn, target, quantitative, threshold):
             quantitative_check[quants] = "Keep: Column is relevant"
     return quantitative_check, exclusion_list
 
+'''
+----------------------------------------------------------------------------------------------
+#Combines two list
+----------------------------------------------------------------------------------------------
+'''
+
 def combine_list(l1: list, l2: list) -> list:
     l3 = l1 + l2
     return l3
 
+'''
+----------------------------------------------------------------------------------------------
+#Removes item from list
+----------------------------------------------------------------------------------------------
+'''
+
 def remove_from_list(l1: list, l2: list) -> list: 
     l3 = [x for x in l1 if x not in l2]
     return l3
-
+'''
+----------------------------------------------------------------------------------------------
+#Handles replacing and approximating missing data in a field to run regression
+----------------------------------------------------------------------------------------------
+'''
 def handle_missing_data(conn, fields: list, missing_paramater: str, strategy: int)-> pd.DataFrame:
     search_string = "SELECT * FROM insurance_data"
     dataframe = pd.read_sql_query(search_string, conn)
@@ -97,8 +131,11 @@ def handle_missing_data(conn, fields: list, missing_paramater: str, strategy: in
                         continue
     return dataframe
 
-        
-
+'''
+----------------------------------------------------------------------------------------------
+#Pulls DB and handles replacing and cleaning data according to the target paramater in preparation for regression
+----------------------------------------------------------------------------------------------
+'''       
 
 def clean_data_return () -> pd.DataFrame:
     connection = dc.connect()
