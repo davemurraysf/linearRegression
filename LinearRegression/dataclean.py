@@ -82,7 +82,7 @@ def extract_table_info(conn):
     quant = []
     qual = []
     for header in headers_info:
-        print(f"Header Name: {header[1]}, Data Type: {header[2]}")
+        #print(f"Header Name: {header[1]}, Data Type: {header[2]}")
         fields.append(header[1])
         dataType = header[2]
         match dataType:

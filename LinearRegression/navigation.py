@@ -100,7 +100,7 @@ def menu(options):
         selection = menu_selection(options)
         return selection
 
-def get_input_int(text):
+def get_input_float(text):
     
     while True:
         number_str = input(text)

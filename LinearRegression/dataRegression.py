@@ -141,9 +141,11 @@ def clean_data_return () -> pd.DataFrame:
     connection = dc.connect()
     qualitative, quantitative, headers = dc.extract_table_info(connection)
     target = n.menu(headers)
-    thresh = n.get_input_int("Please enter threshold value: ")
+    thresh = n.get_input_float("Please enter threshold value: ")
     check_quals, exclude_quals = check_qualitative(connection, target, qualitative, thresh)
+    print(check_quals)
     check_quants, exclude_quants = check_quantitative(connection, target, quantitative, thresh)
+    print(check_quants)
     exclusion_list = combine_list(exclude_quals, exclude_quants)
     paramater_list = remove_from_list(headers,exclusion_list)
     missing_paramater = input("What character is used to display missing data? ")
@@ -152,8 +154,8 @@ def clean_data_return () -> pd.DataFrame:
     clean_data = complete_data.drop(columns=exclusion_list)
     return(clean_data)
 
-data = clean_data_return()
-print(data)
+#data = clean_data_return()
+#print(data)
 
 
 
