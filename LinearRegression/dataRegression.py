@@ -5,9 +5,8 @@ Have the user select the target variable
 Choose paramaters
 Run replacements of missing data
 Clean selected paramaters
-Run a linear regression
 '''
-
+from typing import Tuple
 import dataclean as dc
 import navigation as n
 import scipy.stats as stats
@@ -137,7 +136,7 @@ def handle_missing_data(conn, fields: list, missing_paramater: str, strategy: in
 ----------------------------------------------------------------------------------------------
 '''       
 
-def clean_data_return () -> pd.DataFrame:
+def clean_data_return () -> Tuple[pd.DataFrame, str]:
     connection = dc.connect()
     qualitative, quantitative, headers = dc.extract_table_info(connection)
     target = n.menu(headers)
@@ -152,11 +151,11 @@ def clean_data_return () -> pd.DataFrame:
     incomplete_paramaters = dc.find_missing_data(connection, paramater_list, missing_paramater)
     complete_data = handle_missing_data(connection,incomplete_paramaters,missing_paramater,1)
     clean_data = complete_data.drop(columns=exclusion_list)
-    return(clean_data)
+    return clean_data, target
 
-#data = clean_data_return()
+#data, tar = clean_data_return()
 #print(data)
-
+#print(tar)
 
 
 
