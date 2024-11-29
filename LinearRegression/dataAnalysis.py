@@ -25,7 +25,7 @@ To do:
 1. create classes for data and model
 2. Add visualization of dataset vs model
 3. Add input value and expected out put
-4. Convert redundant parallel process to metal for faster processing
+4. see what processes can be converted to metal to learn gpu programing
 
 '''
 
